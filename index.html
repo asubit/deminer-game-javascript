@@ -9,7 +9,8 @@
 
 <body>
     <table id="grid" border="1"></table>
-
+    <div><a href="#" onclick="retry()">Retry</a></div>
+    <div id="info"></div>
     <script>
       // Create grid
       var grid = $('#grid'), nbRow = 5, nbCol = 5;
@@ -113,13 +114,23 @@
       }
 
       function isWin() {
-        var clickedCells = grid.find('td.clicked').length;
+        var clickedCells = parseInt(grid.find('td.clicked').length);
+        var bomCells = parseInt(grid.find('td.bomb').length);
+        var totalCells = parseInt(grid.find('td').length);
+        if (parseInt(clickedCells+bomCells) == totalCells) {
+          $('#info').append('WIN!');
+        }
       }
 
       function isGameOver(cell) {
         if (cell.hasClass('bomb')) {
-          alert('BOUM!');
+          grid.find('td.bomb').addClass('bomb-explode');
+          $('#info').append('BOUM!');
         }
+      }
+
+      function retry() {
+        location.reload();
       }
     </script>
 </body>
