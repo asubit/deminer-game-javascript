@@ -2,43 +2,36 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>JS</title>
+    <title>Deminer Javascript</title>
     <script src="jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-    <table id="grid" border="1"></table>
-    <div><a href="#" onclick="retry()">Retry</a></div>
-    <div id="info"></div>
+    <table id="grid" border="1" cellpadding="5" cellspacing="0"></table>
     <script>
       // Create grid
-      var grid = $('#grid'), nbRow = 5, nbCol = 5;
-      // add rows
-      var row = 0;
+      grid = $('#grid'), nbRow = 5, nbCol = 5;
+      row = 0;// add rows
       while (row < nbRow) {
-        var rowId = 'row'+row;
+        rowId = 'row'+row;
         grid.append('<tr id="'+rowId+'"></tr>');
-        // add cells in row
-        var cell = 0;
+        cell = 0;// add cells in row
         while (cell < nbCol) {
-          var cellId = rowId+'-cell'+cell;
+          cellId = rowId+'-cell'+cell;
           $('tr#'+rowId).append('<td id="'+cellId+'"></td>');
           cell++;
         }
         row++;
       }
-
-      // Place bombs
-      var nbBombs = 5;
-      bomb = 0;
+      // Place bombs in grid
+      nbBombs = 5, bomb = 0;
       while (bomb < nbBombs) {
-        var bombX = Math.floor((Math.random() * nbCol) + 1);
-        var bombY = Math.floor((Math.random() * nbRow) + 1);
+        bombX = Math.floor((Math.random() * nbCol) + 1);
+        bombY = Math.floor((Math.random() * nbRow) + 1);
         grid.find('tr:nth-child('+bombY+') td:nth-child('+bombX+')').addClass('bomb');
         bomb++;
       }
-
       // Play
       grid.find('tr td').on('click', function(){
         isGameOver($(this));
@@ -47,92 +40,49 @@
         $(this).off("click");
         isWin();
       });
-
+      // Check if bomb in cell
+      function isBombIn(x, y) {
+        isBomb = false;
+        maxIndexX = parseInt(nbCol - 1), maxIndexY = parseInt(nbRow - 1);// grid limits
+        if ( (0 < x && x < maxIndexX) && (0 < y && y < maxIndexY) ) {// if cell exist
+          if ( grid.find('tr:eq('+x+') td:eq('+y+')').hasClass('bomb') ) {// if bomb
+            isBomb = true;
+          }
+        }
+        return isBomb;
+      }
       // Get bombs arround clicked cell
       function getNbBombsArround(cell) {
-        var maxIndexX = parseInt(nbCol + 1), maxIndexY = parseInt(nbRow + 1);
-        var nbBombsArround = 0;
-        var cellCol = cell.index();
-        var cellRow = cell.parent().index();
-        // up left
-        var upLeftX = parseInt(cellCol - 1), upLeftY = parseInt(cellRow - 1);
-        if ((0 < upLeftX && upLeftX < maxIndexX) && (0 < upLeftY && upLeftY < maxIndexY)) {
-          if (grid.find('tr:eq('+upLeftY+') td:eq('+upLeftX+')').hasClass('bomb')) {
-            nbBombsArround++;console.log('bomb found in '+upLeftX+','+upLeftY);
-          }
-        }
-        // up near
-        var upNearX = parseInt(cellCol), upNearY = parseInt(cellRow - 1);
-        if ((0 < upNearX && upNearX < maxIndexX) && (0 < upNearY && upNearY < maxIndexY)) {
-          if (grid.find('tr:eq('+upNearY+') td:eq('+upNearX+')').hasClass('bomb')) {
-            nbBombsArround++;console.log('bomb found in '+upNearX+','+upNearY);
-          }
-        }
-        // up right
-        var upRightX = parseInt(cellCol + 1), upRightY = parseInt(cellRow - 1);
-        if ((0 < upRightX && upRightX < maxIndexX) && (0 < upRightY && upRightY < maxIndexY)) {
-          if (grid.find('tr:eq('+upRightY+') td:eq('+upRightX+')').hasClass('bomb')) {
-            nbBombsArround++;console.log('bomb found in '+upRightX+','+upRightY);
-          }
-        }
-        // near left
-        var nearLeftX = parseInt(cellCol - 1), nearLeftY = parseInt(cellRow);
-        if ((0 < nearLeftX && nearLeftX < maxIndexX) && (0 < nearLeftY && nearLeftY < maxIndexY)) {
-          if (grid.find('tr:eq('+nearLeftY+') td:eq('+nearLeftX+')').hasClass('bomb')) {
-            nbBombsArround++;console.log('bomb found in '+nearLeftX+','+nearLeftY);
-          }
-        }
-        // near right
-        var nearRightX = parseInt(cellCol + 1), nearRightY = parseInt(cellRow);
-        if ((0 < nearRightX && nearRightX < maxIndexX) && (0 < nearRightY && nearRightY < maxIndexY)) {
-          if (grid.find('tr:eq('+nearRightY+') td:eq('+nearRightX+')').hasClass('bomb')) {
-            nbBombsArround++;console.log('bomb found in '+nearRightX+','+nearRightY);
-          }
-        }
-        // bottom left
-        var bottomLeftX = parseInt(cellCol - 1), bottomLeftY = parseInt(cellRow + 1);
-        if ((0 < bottomLeftX && bottomLeftX < maxIndexX) && (0 < bottomLeftY && bottomLeftY < maxIndexY)) {
-          if (grid.find('tr:eq('+bottomLeftY+') td:eq('+bottomLeftX+')').hasClass('bomb')) {
-            nbBombsArround++;console.log('bomb found in '+bottomLeftX+','+bottomLeftY);
-          }
-        }
-        // bottom near
-        var bottomNearX = parseInt(cellCol), bottomNearY = parseInt(cellRow + 1);
-        if ((0 < bottomNearX && bottomNearX < maxIndexX) && (0 < bottomNearY && bottomNearY < maxIndexY)) {
-          if (grid.find('tr:eq('+bottomNearY+') td:eq('+bottomNearX+')').hasClass('bomb')) {
-            nbBombsArround++;console.log('bomb found in '+bottomNearX+','+bottomNearY);
-          }
-        }
-        // bottom right
-        var bottomRightX = parseInt(cellCol + 1), bottomRightY = parseInt(cellRow + 1);
-        if ((0 < bottomRightX && bottomRightX < maxIndexX) && (0 < bottomRightY && bottomRightY < maxIndexY)) {
-          if (grid.find('tr:eq('+bottomRightY+') td:eq('+bottomRightX+')').hasClass('bomb')) {
-            nbBombsArround++;console.log('bomb found in '+bottomRightX+','+bottomRightY);
-          }
-        }
+        nbBombsArround = 0;
+        cellX = parseInt(cell.index()), cellY = parseInt(cell.parent().index());// cell coord.
+        nbBombsArround += (isBombIn(cellX-1, cellY-1) ? 1 : 0);// up left
+        nbBombsArround += (isBombIn(cellX  , cellY-1) ? 1 : 0);// up near
+        nbBombsArround += (isBombIn(cellX+1, cellY-1) ? 1 : 0);// up right
+        nbBombsArround += (isBombIn(cellX-1, cellY  ) ? 1 : 0);// near left
+        nbBombsArround += (isBombIn(cellX+1, cellY  ) ? 1 : 0);// near right
+        nbBombsArround += (isBombIn(cellX-1, cellY+1) ? 1 : 0);// bottom left
+        nbBombsArround += (isBombIn(cellX  , cellY+1) ? 1 : 0);// bottom near
+        nbBombsArround += (isBombIn(cellX+1, cellY+1) ? 1 : 0);// bottom right
         return nbBombsArround;
       }
-
+      // Is all cells without bomb clicked
       function isWin() {
-        var clickedCells = parseInt(grid.find('td.clicked').length);
-        var bomCells = parseInt(grid.find('td.bomb').length);
-        var totalCells = parseInt(grid.find('td').length);
-        if (parseInt(clickedCells+bomCells) == totalCells) {
-          $('#info').append('WIN!');
+        clickedCells = parseInt(grid.find('td.clicked').length);
+        bombCells    = parseInt(grid.find('td.bomb').length);
+        totalCells   = parseInt(grid.find('td').length);
+        if (parseInt(clickedCells+bombCells) == totalCells) {
+          alert('YOU WIN!');
+          location.reload();
         }
       }
-
+      // Is cell clicked has bomb
       function isGameOver(cell) {
         if (cell.hasClass('bomb')) {
-          grid.find('td.bomb').addClass('bomb-explode');
-          $('#info').append('BOUM!');
+          grid.find('td.bomb').removeClass('clicked').addClass('bomb-explode');
+          alert('BOUM!');
+          location.reload();
         }
-      }
-
-      function retry() {
-        location.reload();
       }
     </script>
 </body>
-
 </html>
