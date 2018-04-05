@@ -1,9 +1,24 @@
-table tr td {
-  height: 10px;
-  width: 10px;
-  font-size: 10px;
-  text-align: center;
+table#grid {
+  border: black 1px solid;
 }
+table#grid tr td {
+  height: 15px;
+  width: 15px;
+  font-size: 12px;
+  text-align: center;
+  background: #ccc;
+  border: black 1px solid;
+  padding: 3px;
+  font-weight: bold;
+}
+/* UNCOMMENT FOR DEBUG
+.bomb {
+  background: yellow !important;
+}
+*/
 .bomb-explode {
-  background: red;
+  background: red !important;
+}
+.clicked {
+  background: white !important;
 }
